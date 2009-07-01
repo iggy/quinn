@@ -1,0 +1,16 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# quinn's server daemon
+
+import threading, icmplib
+
+def ping(host):
+  """simple ICMP ping"""
+  print "Pinging: ", host
+  rtt = icmplib.ping(host)
+  print "RTT: ", rtt
+  
+
+t = threading.Timer(1, ping, ['localhost'])
+t.start()
