@@ -103,7 +103,7 @@ class Packet(object):
         # as to allow passing method around without having to define a lambda
         # method.
         args = [self.header[0], self.header[1], 1]
-        pack_format = "!BBH"
+        pack_format = "!ddd"
         if self.data:
             pack_format += "%ss" % len(self.data)
             args.append(self.data)
@@ -125,7 +125,7 @@ class Packet(object):
             checksum_packet = checksum_packet[:-1]
         else:
             odd_byte = 0
-        two_byte_chunks = struct.unpack("!%sH" % (len(checksum_packet)/2),
+        two_byte_chunks = struct.unpack("!%sd" % (len(checksum_packet)/2),
                                         checksum_packet)
         total = 0
         for two_bytes in two_byte_chunks:
@@ -139,7 +139,7 @@ class Packet(object):
     def parse(cls, packet):
         """Parse ICMP packet and return an instance of Packet"""
         string_len = len(packet) - 4 # Ignore IP header
-        pack_format = "!BBH"
+        pack_format = "!ddd"
         if string_len:
             pack_format += "%ss" % string_len
         unpacked_packet = struct.unpack(pack_format, packet)
@@ -187,7 +187,7 @@ def ping(addr):
     #while 1:
     ## create ping packet 
     seq_num += 1
-    pdata = struct.pack("!HHd",(~4)&0xffff,(~1)&0xffff,time.time())
+    pdata = struct.pack("!ddd",(~4)&0xffff,(~1)&0xffff,time.time())
 
     ## send initial packet 
     base_packet.data = pdata
@@ -202,7 +202,7 @@ def ping(addr):
     r = Packet.parse(buf[20:])
 
     ## parse ping data
-    (ident,seq,timestamp) = struct.unpack("!HHd",r.data)
+    (ident,seq,timestamp) = struct.unpack("!ddd",r.data)
 
     ## calculate rounttrip time
     rtt =  current_time - timestamp

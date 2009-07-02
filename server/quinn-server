@@ -3,14 +3,34 @@
 
 # quinn's server daemon
 
-import threading, icmplib
+import threading, subprocess, re
 
 def ping(host):
   """simple ICMP ping"""
   print "Pinging: ", host
-  rtt = icmplib.ping(host)
+  #rtt = icmplib.ping(host)
+  proc = subprocess.Popen("/bin/ping -nqc1 %s" % (host), shell=True, stdout=subprocess.PIPE)
+  out = proc.stdout.read()
+  #print out
+  try:
+    rtt = re.search('([\d.]+)\/', out).group(1)
+  except AttributeError:
+    rtt = False
   print "RTT: ", rtt
-  
+  return rtt
 
-t = threading.Timer(1, ping, ['localhost'])
+def pingtest(host):
+  """test ping a host then record the output in the DB"""
+  rtt = ping(host)
+  # save the rtt to the DB, if it failed, the rtt is false
+  
+def netscan(nets=None):
+  if not net:
+    p = subprocess.Popen("/sbin/route -n", shell=True, stdout=subprocess.PIPE)
+    out = p.stdout.read()
+    nets = re.findall('^([\d\.]+)', str,re.M).
+    # TODO strip out invalid nets
+  for
+
+t = threading.Timer(1, pingtest, ['localhost'])
 t.start()
