@@ -1,2 +1,38 @@
 Quinn is a network monitoring package with a django frontend. I've written 
 about 20 lines of code so far, so don't expect much.
+
+
+
+Features
+---------
+network discovery
+snmp
+different network views
+ * rack by rack (needs configuration)
+ * standard "cloud" map (should work with regular discovery)
+ * by tag (i.e. all servers running http, all servers in branch office 2, etc.)
+ * big screen/NOC view
+ * by subnet
+UPS/RPS control via snmp
+ping/service monitoring
+notifications
+auth against active directory (hopefully groups too)
+client/agent that can track more data (disk usage, mem usage, cpu usage, etc.)
+Open services from the network view (i.e. open http in new tab)
+
+
+Maybes
+--------
+backups
+ * self service... each user selects what they want on their own systems, etc.
+ * distributed storage (i.e. use desktops as storage, multiple copies, site aware)
+ * backups between sites
+ * disk and tapes supported
+ * cross platform
+ * sql/exchange/pgsql/mysql support
+ * virus scan during backup option
+
+
+INSTALL
+----------
+change SECRET_KEY in settings.py
