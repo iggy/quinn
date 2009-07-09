@@ -1,5 +1,6 @@
 from django.db import models
-from tagging.fields import TagField
+#from tagging.fields import TagField
+import tagging
 
 # Create your models here.
 
@@ -8,12 +9,22 @@ class Host(models.Model):
     a device connected to the network that we care about
     relationships: Rack, ScanNetwork, Test, Location
     '''
-    IP = models.IPAddrField()
+    IP = models.IPAddressField()
     name = models.CharField(max_length=200)
-    tags = TagField()
-    location = models.ForeignKey('Location') # a host should only be in 1 location... it's physics
+    #tags = TagField()
+    location = models.ForeignKey('Location',null=True) # a host should only be in 1 location... it's physics
     
-class HostGroups(models.Model):
+    def __unicode__(self):
+        return "%s - %s" % (self.IP, self.name)
+
+#tagging.register(Host)
+
+class HostExtraData(models.Model):
+    host = models.ForeignKey(Host)
+    key = models.CharField(max_length=60)
+    value = models.TextField()
+    
+class HostGroup(models.Model):
     name = models.CharField(max_length=200)
     hosts = models.ManyToManyField(Host)
 
@@ -59,7 +70,7 @@ class Notification(models.Model):
     teststatus = models.ForeignKey(TestStatus)
     error_status = models.CharField(max_length=200) # FIXME same as Test.last_status
     hosts = models.ManyToManyField(Host)
-    hostgroups = models.ManyToManyField(HostGroups)
+    hostgroups = models.ManyToManyField(HostGroup)
     
 class Service(models.Model):
     name = models.CharField(max_length=200)

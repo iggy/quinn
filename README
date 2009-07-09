@@ -36,3 +36,4 @@ backups
 INSTALL
 ----------
 change SECRET_KEY in settings.py
+setup locations
