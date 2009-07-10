@@ -12,3 +12,10 @@ admin.site.register(Host, HostAdmin)
 
 admin.site.register(HostGroup)
 
+admin.site.register(ScanNetwork)
+
+admin.site.register(Tester)
+
+admin.site.register(Rack)
+
+admin.site.register(Location)

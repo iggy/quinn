@@ -34,7 +34,7 @@ class ScanNetwork(models.Model):
     cidr = models.CharField(max_length=20)
     
     
-class Test(models.Model):
+class Tester(models.Model):
     '''
     a test we run against a host (i.e. ping, service test, etc)
     relationships: host
@@ -44,7 +44,7 @@ class Test(models.Model):
     last_status = models.CharField(max_length=200) # FIXME charfield?
     
 class TestStatus(models.Model):
-    test = models.ForeignKey(Test)
+    test = models.ForeignKey(Tester)
     status = models.CharField(max_length=200) # FIXME same as Test.last_status
 
 # FIXME do we want to do it like this or give each host a list of rack locations
