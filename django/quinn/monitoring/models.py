@@ -11,6 +11,7 @@ class Host(models.Model):
     '''
     IP = models.IPAddressField()
     name = models.CharField(max_length=200)
+    OperatingSystem = models.CharField(max_length=200)
     #tags = TagField()
     location = models.ForeignKey('Location',null=True) # a host should only be in 1 location... it's physics
     
