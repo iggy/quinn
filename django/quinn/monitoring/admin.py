@@ -6,7 +6,7 @@ class HostExtraDataInline(admin.StackedInline):
     extra = 3
     
 class HostAdmin(admin.ModelAdmin):
-    inlines = [HostExtraDataInline]
+    inlines = [HostExtraDataInline,]
 
 admin.site.register(Host, HostAdmin)
 
@@ -17,5 +17,10 @@ admin.site.register(ScanNetwork)
 admin.site.register(Tester)
 
 admin.site.register(Rack)
+
+class HostInline(admin.TabularInline):
+    model = Host
+class LocationAdmin(admin.ModelAdmin):
+    inlines = [HostInline,]
 
 admin.site.register(Location)

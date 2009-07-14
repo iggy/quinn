@@ -3,7 +3,17 @@
 
 # quinn's server daemon
 
-import threading, subprocess, re
+import threading, subprocess, re, tempfile, sys
+import xml.dom.minidom as minidom
+
+# django init stuff, after this we should be able to access django models 
+# for whatever info we need
+sys.path.append("../django")
+from django.core.management import setup_environ
+import settings
+setup_environ(settings)
+
+# from quinn.models import scannets, etc.
 
 def ping(host):
   """simple ICMP ping"""
@@ -25,12 +35,28 @@ def pingtest(host):
   # save the rtt to the DB, if it failed, the rtt is false
   
 def netscan(nets=None):
-  if not net:
-    p = subprocess.Popen("/sbin/route -n", shell=True, stdout=subprocess.PIPE)
-    out = p.stdout.read()
-    nets = re.findall('^([\d\.]+)', str,re.M).
+  if not nets:
+    #p = subprocess.Popen("/sbin/route -n", shell=True, stdout=subprocess.PIPE)
+    #out = p.stdout.read()
+    #nets = re.findall('^([\d\.]+)', str,re.M).
     # TODO strip out invalid nets
-  for
+    # get nets from DB
+    nets = ["10.0.1.0/24"]#, "192.168.100.0/24"
+    
+  for net in nets:
+    # scan the network with nmap, and then parse it's xml results
+    (ofile, opath) = tempfile.mkstemp()
+    out = subprocess.Popen("/usr/bin/nmap -oX %s %s" % (opath, net), shell=True, stdout=subprocess.PIPE)
+    print "nmap output to: ", opath
+    md = minidom.parse(opath)
+    for h in md.getElementsByTagName('host'):
+      # create/fetch Host model for this host
+      #Host(h.get
+      for p in h.getElementsByTagName('port'):
+        #create new Port model for the host
+        #Port(
 
-t = threading.Timer(1, pingtest, ['localhost'])
-t.start()
+t1 = threading.Timer(1, pingtest, ['localhost'])
+t2 = threading.Timer(1, netscan)
+t1.start()
+t2.start()

@@ -4,8 +4,18 @@
         "pk": 1,
         "fields": {
             "IP":"192.168.100.64",
-            "name":"brianj-linux"
+            "name":"brianj-linux",
+            "location": 1
         }
+    },
+    {
+        "model": "monitoring.host",
+        "pk": 2,
+        "fields": {
+            "IP":"192.168.100.10",
+            "name":"sharecenter",
+            "location": 1
+       }
     },
     {
         "pk": 1,
