@@ -19,6 +19,9 @@ notifications
 auth against active directory (hopefully groups too)
 client/agent that can track more data (disk usage, mem usage, cpu usage, etc.)
 Open services from the network view (i.e. open http in new tab)
+Would be nice to have some way to track the logins and passwords that our 
+	company uses for everything (i.e. licensing site logins, etc.)
+License tracking
 
 
 Maybes
