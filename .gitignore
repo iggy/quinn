@@ -1,5 +1,6 @@
 *~
 *.pyc
 *.db
-development-bundle
+development-bundle/*
 temp.xml
+nmap.xml
