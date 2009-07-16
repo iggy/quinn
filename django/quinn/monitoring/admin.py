@@ -24,3 +24,6 @@ class LocationAdmin(admin.ModelAdmin):
     inlines = [HostInline,]
 
 admin.site.register(Location)
+
+admin.site.register(Notification)
+admin.site.register(Service)

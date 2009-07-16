@@ -9,9 +9,11 @@ class Host(models.Model):
     a device connected to the network that we care about
     relationships: Rack, ScanNetwork, Test, Location
     '''
-    IP = models.IPAddressField()
+    IP = models.IPAddressField(unique=True)
     name = models.CharField(max_length=200)
-    OperatingSystem = models.CharField(max_length=200)
+    OS_vendor = models.CharField(max_length=200,blank=True)
+    OS_class = models.CharField(max_length=200,blank=True)
+    OS_name = models.CharField(max_length=200,blank=True)
     #tags = TagField()
     location = models.ForeignKey('Location',null=True) # a host should only be in 1 location... it's physics
     
@@ -96,4 +98,6 @@ class Service(models.Model):
     host = models.ForeignKey(Host)
     port = models.IntegerField()
     monitored = models.BooleanField(default=False)
+    def __unicode__(self):
+        return "%s (%s) on %s" % (self.name, self.port, self.host.IP)
 

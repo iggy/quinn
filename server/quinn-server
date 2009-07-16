@@ -8,10 +8,14 @@ import xml.dom.minidom as minidom
 
 # django init stuff, after this we should be able to access django models 
 # for whatever info we need
-sys.path.append("../django")
+
+# FIXME hackish, won't be required when we start installing to the system
+import sys, os.path
+sys.path.append(os.path.abspath('../django/'))
+
 from django.core.management import setup_environ
-import settings
-setup_environ(settings)
+import quinn.settings
+setup_environ(quinn.settings)
 
 # from quinn.models import scannets, etc.
 
@@ -55,6 +59,7 @@ def netscan(nets=None):
       for p in h.getElementsByTagName('port'):
         #create new Port model for the host
         #Port(
+        pass
 
 t1 = threading.Timer(1, pingtest, ['localhost'])
 t2 = threading.Timer(1, netscan)
