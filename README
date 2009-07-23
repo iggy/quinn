@@ -26,7 +26,7 @@ License tracking
 
 Maybes
 --------
-backups
+Backups
  * self service... each user selects what they want on their own systems, etc.
  * distributed storage (i.e. use desktops as storage, multiple copies, site aware)
  * backups between sites
@@ -34,6 +34,9 @@ backups
  * cross platform
  * sql/exchange/pgsql/mysql support
  * virus scan during backup option
+ * de-duplication
+ * full backups only, but that won't matter because of the de-dup
+TODO list
 
 
 INSTALL

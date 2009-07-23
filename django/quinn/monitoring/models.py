@@ -1,5 +1,5 @@
 from django.db import models
-#from tagging.fields import TagField
+from tagging.fields import TagField
 import tagging
 
 # Create your models here.
@@ -9,8 +9,13 @@ class Host(models.Model):
     a device connected to the network that we care about
     relationships: Rack, ScanNetwork, Test, Location
     '''
-    IP = models.IPAddressField(unique=True)
+    # FIXME some boxes have more than 1 IP, more than 1 MAC, etc.
+    # what exactly is going to be unique and singular on a box?
+    # going to use the IP as the unique thing, then the user can manually merge
+    # hosts and the IP's will go into the IP model as additioinal_ips
     name = models.CharField(max_length=200)
+    IP = models.IPAddressField(unique=True)
+    #mac = models.CharField(max_length=12)
     OS_vendor = models.CharField(max_length=200,blank=True)
     OS_class = models.CharField(max_length=200,blank=True)
     OS_name = models.CharField(max_length=200,blank=True)
@@ -20,7 +25,14 @@ class Host(models.Model):
     def __unicode__(self):
         return "%s - %s" % (self.IP, self.name)
 
-#tagging.register(Host)
+tagging.register(Host)
+
+class IP(models.Model):
+    host = models.ForeignKey(Host,related_name="additional_ips")
+    IP = models.IPAddressField(unique=True)
+class Mac(models.Model):
+    host = models.ForeignKey(Host)
+    mac = models.CharField(max_length=12)
 
 class HostExtraData(models.Model):
     '''
