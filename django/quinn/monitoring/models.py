@@ -1,5 +1,5 @@
 from django.db import models
-from tagging.fields import TagField
+#from tagging.fields import TagField
 import tagging
 
 # Create your models here.
@@ -15,23 +15,23 @@ class Host(models.Model):
     # hosts and the IP's will go into the IP model as additioinal_ips
     name = models.CharField(max_length=200)
     IP = models.IPAddressField(unique=True)
-    #mac = models.CharField(max_length=12)
-    OS_vendor = models.CharField(max_length=200,blank=True)
-    OS_class = models.CharField(max_length=200,blank=True)
-    OS_name = models.CharField(max_length=200,blank=True)
+    mac = models.CharField(max_length=12,blank=True,null=True)
+    OS_vendor = models.CharField(max_length=200,blank=True,null=True)
+    OS_class = models.CharField(max_length=200,blank=True,null=True)
+    OS_name = models.CharField(max_length=200,blank=True,null=True)
     #tags = TagField()
     location = models.ForeignKey('Location',null=True) # a host should only be in 1 location... it's physics
     
     def __unicode__(self):
         return "%s - %s" % (self.IP, self.name)
 
-tagging.register(Host)
+#tagging.register(Host)
 
 class IP(models.Model):
     host = models.ForeignKey(Host,related_name="additional_ips")
     IP = models.IPAddressField(unique=True)
 class Mac(models.Model):
-    host = models.ForeignKey(Host)
+    host = models.ForeignKey(Host,related_name="additional_macs")
     mac = models.CharField(max_length=12)
 
 class HostExtraData(models.Model):

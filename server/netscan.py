@@ -1,9 +1,9 @@
 #from __future__ import with_statement
-import tempfile, subprocess
+import tempfile, subprocess, Queue, threading
 import xml.etree.ElementTree as ET
 
 # FIXME hackish, won't be required when we start installing to the system
-import sys, os.path
+import sys, os
 sys.path.append(os.path.abspath('../django/'))
 
 from django.core.management import setup_environ
@@ -16,11 +16,53 @@ from quinn.monitoring.models import Host, Service
 
 from pprint import pprint
 
+if os.geteuid() != 0:
+    print sys.argv[0], " must be run as root for scanning to work"
+    sys.exit(1)
+
 def netscan(cidr):
+    """
+    do a quick network scan to see what's up or down
+    something else will coma along behind this and scan the hosts that are up 
+    or down and haven't already been scanned and don't need a rescan
+    """
+    proc = subprocess.Popen("nmap %s -sP -oX -" % (cidr), shell=True, stdout=subprocess.PIPE)
+    xmlstr = proc.stdout.read()
+    x = ET.fromstring(xmlstr)
+    for host in x.findall('host'):
+        # this scan we only get host, status, ip addr, mac addr (sometimes)
+        if host.find('status').get('state') != "up":
+            print "Host not up: ", host.find('address').get('addr')
+        else:
+            print "Host up: ", host.find('address').get('addr')
+            hip = host.find('address').get('addr')
+            try:
+                hname = host.find('hostnames')[0].get('name')
+            except:
+                hname = "unknown"
+            try:
+                hmac = host.find('address')[0].get('mac')
+            except:
+                hmac = ''
+            try:
+                print "Attempting to find Host record with IP: ", host.find('address').get('addr')
+                h = Host.objects.get(IP=hip)
+                h.name = hname
+                h.mac = hmac
+            except:
+                # TODO only create a new record if it's not in additional_ips
+                print "No record found, creating new Host record for ", host.find('address').get('addr')
+                h = Host(IP=hip,name=hname,mac=hmac)
+            h.save()
+            
+        
+    
+    
+def hostscan(host):
     #(tf, tfn) = tempfile.mkstemp('quinn')
     #os.close(tf) # we don't want the file open, we just want a temp file name
     #proc = subprocess.Popen("nmap %s -oX %s" % (cidr, tfn), shell=True, stdout=subprocess.PIPE)
-    proc = subprocess.Popen("nmap %s -O -oX -" % (cidr), shell=True, stdout=subprocess.PIPE)
+    proc = subprocess.Popen("nmap %s -O -sV -oX -" % (host), shell=True, stdout=subprocess.PIPE)
     xmlstr = proc.stdout.read()
     x = ET.fromstring(xmlstr)
     for host in x.findall('host'):
@@ -75,3 +117,20 @@ if __name__=='__main__':
         print "\nUsage: %s <cidr>\nExample: %s 192.168.100.1/24\n" % (sys.argv[0], sys.argv[0])
         sys.exit()
     netscan(sys.argv[1])
+    def worker():
+        while True:
+            item = q.get()
+            hostscan(item)
+            q.task_done()
+            
+    q = Queue.Queue()
+    for i in range(4):
+        t = threading.Thread(target=worker)
+        t.setDaemon(True)
+        t.start()
+    
+    for host in Host.objects.filter(OS_vendor__isnull=True):
+        q.put(host.IP)
+    
+    q.join()
+    
