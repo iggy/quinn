@@ -35,24 +35,35 @@ def netscan(cidr):
             print "Host not up: ", host.find('address').get('addr')
         else:
             print "Host up: ", host.find('address').get('addr')
-            hip = host.find('address').get('addr')
+            hip = ''
+            hmac = ''
+            hmacvnd = ''
+            for addr in host.findall('address'):
+                if addr.get('addrtype') == 'ipv4':
+                    hip = addr.get('addr')
+                if addr.get('addrtype') == 'mac':
+                    hmac = addr.get('addr')
+                    hmacvnd = addr.get('vendor')
+                    
+            #hip = host.find('address').get('addr')
             try:
                 hname = host.find('hostnames')[0].get('name')
             except:
                 hname = "unknown"
-            try:
-                hmac = host.find('address')[0].get('mac')
-            except:
-                hmac = ''
+            #try:
+                #hmac = host.find('address')[0].get('mac')
+            #except:
+                #hmac = ''
             try:
                 print "Attempting to find Host record with IP: ", host.find('address').get('addr')
                 h = Host.objects.get(IP=hip)
                 h.name = hname
                 h.mac = hmac
+                h.macvnd = hmacvnd
             except:
                 # TODO only create a new record if it's not in additional_ips
                 print "No record found, creating new Host record for ", host.find('address').get('addr')
-                h = Host(IP=hip,name=hname,mac=hmac)
+                h = Host(IP=hip,name=hname,mac=hmac,macvnd=hmacvnd)
             h.save()
             
         
@@ -117,6 +128,9 @@ if __name__=='__main__':
         print "\nUsage: %s <cidr>\nExample: %s 192.168.100.1/24\n" % (sys.argv[0], sys.argv[0])
         sys.exit()
     netscan(sys.argv[1])
+    
+    sys.exit(0)
+    
     def worker():
         while True:
             item = q.get()

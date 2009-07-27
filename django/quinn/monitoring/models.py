@@ -16,6 +16,7 @@ class Host(models.Model):
     name = models.CharField(max_length=200)
     IP = models.IPAddressField(unique=True)
     mac = models.CharField(max_length=12,blank=True,null=True)
+    macvnd = models.CharField(max_length=200,blank=True,null=True)
     OS_vendor = models.CharField(max_length=200,blank=True,null=True)
     OS_class = models.CharField(max_length=200,blank=True,null=True)
     OS_name = models.CharField(max_length=200,blank=True,null=True)
@@ -24,8 +25,18 @@ class Host(models.Model):
     
     def __unicode__(self):
         return "%s - %s" % (self.IP, self.name)
+        
+    class Meta:
+        ordering = ['name',]
 
-tagging.register(Host)
+try:
+    tagging.register(Host)
+except tagging.AlreadyRegistered:
+    # Dev Note: Not sure the right way to register a model for tagging b/c it
+    # raises this error if registered more than once. We end up registering
+    # the first time during "manage.py syncdb" and then a second time when
+    # actually attempting to run the site.
+    pass
 
 class IP(models.Model):
     host = models.ForeignKey(Host,related_name="additional_ips")
