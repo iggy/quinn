@@ -1,6 +1,8 @@
 *~
 *.pyc
 *.db
-development-bundle/*
+development-bundle
+multi-ddm
 temp.xml
 nmap.xml
+jquery.multi-ddm.pack.js

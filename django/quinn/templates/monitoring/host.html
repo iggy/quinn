@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Quinn - Racks{% endblock %}
+
+
+{% block content %}
+
+<table>
+    <tr>
+        <td>ID:</td><td>{{ host.id }}</td>
+    </tr>
+    <tr>
+        <td>Name:</td><td>{{ host.name }}</td>
+    </tr>
+    <tr>
+        <td>IP Address:</td><td>{{ host.IP }}</td>
+    </tr>
+        {% if host.additional_ips.all %}
+    <tr>
+        <td>
+            <ul>
+                <li>Additional IPs</li>
+                {% for aip in host.additional_ips.all %}
+                <li>{{ aip }}</li>
+                {% endfor %}
+            </ul>
+        </td>
+    </tr>
+        {% endif %}
+    <tr>
+        <td>MAC Address:</td><td>{{ host.mac }}</td>
+    </tr>
+        {% if host.additional_macs.all %}
+    <tr>
+        <td>
+            <ul>
+                <li>Additional MACs</li>
+                {% for amac in host.additional_macs.all %}
+                <li>{{ amac }}</li>
+                {% endfor %}
+            </ul>
+        </td>
+    </tr>
+        {% endif %}
+    <tr>
+        <td>OS Vendor:</td><td>{{ host.OS_vendor }}</td>
+    </tr>
+    <tr>
+        <td>OS Class:</td><td>{{ host.OS_class }}</td>
+    </tr>
+    <tr>
+        <td>OS Name:</td><td>{{ host.OS_name }}</td>
+    </tr>
+    <tr>
+        <td>Location:</td><td>{{ host.location }}</td>
+    </tr>
+    {# TODO tagging and HostExtraData #}
+</table>
+        
+
+{% endblock %}

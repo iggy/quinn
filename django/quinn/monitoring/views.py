@@ -34,7 +34,15 @@ def rack(request):
     return HttpResponse('foo')
 
 @login_required
+def racks(request):
+    '''view racks and their contents'''
+    racks = Rack.objects.all()
+    useq = range(0,42)
+    return direct_to_template(request, 'monitoring/racks.html', locals())
+
+@login_required
 def host(request, hostid):
     '''view an individual host's details'''
-    return HttpResponse('foo')
+    host = Host.objects.get(id=hostid)
+    return direct_to_template(request, 'monitoring/host.html', locals())
     

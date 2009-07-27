@@ -25,7 +25,7 @@ class Host(models.Model):
     def __unicode__(self):
         return "%s - %s" % (self.IP, self.name)
 
-#tagging.register(Host)
+tagging.register(Host)
 
 class IP(models.Model):
     host = models.ForeignKey(Host,related_name="additional_ips")
@@ -78,10 +78,37 @@ class TestStatus(models.Model):
 class Rack(models.Model):
     ''' represents a physical rack'''
     name = models.CharField(max_length=200)
-    host = models.ManyToManyField(Host)
+    hosts = models.ManyToManyField(Host,through='RackLocation')
+    how_many_U = models.IntegerField(default="42")
     def __unicode__(self):
         return self.name
+    def get_hosts_in_order(self):
+        d = []
+        for u in range(self.how_many_U,0,-1):
+            try:
+                host = self.racklocation_set.get(rack_Us__U=u).host
+            except:
+                host = ''
+            d.append(host)
+        return d
     
+class RackLocation(models.Model):
+    host = models.ForeignKey(Host)
+    rack = models.ForeignKey(Rack)
+    rack_Us = models.ManyToManyField('RackU')
+    def __unicode__(self):
+        return "%s - %s" % (self.rack_Us,self.host)
+    class Meta:
+        ordering = ['rack_Us']
+        #order_with_respect_to = 'rack_Us'
+
+class RackU(models.Model):
+    U = models.IntegerField()
+    def __unicode__(self):
+        return str(self.U)
+    class Meta:
+        ordering = ['-U']
+
 class Location(models.Model):
     '''a physical location (i.e. branch office, HQ, data center, colo, etc)'''
     name = models.CharField(max_length=200)

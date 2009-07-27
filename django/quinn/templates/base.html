@@ -17,7 +17,7 @@
 <div id="menu">
     <ul>
         <li><a href="/monitoring/">Home</a></li>
-        <li><a href="#">Racks</a>
+        <li><a href="racks">Racks</a>
             <ul>
             {% for rack in racks %}
                 <li><a href="/monitoring/rack/?which_rack={{ rack }}">{{ rack }}</a></li>
@@ -28,15 +28,15 @@
 </div>
 
 <script type="text/javascript">
-$(document).ready(function(){
-    $('#menu').menu({
-        mode:'static',
-        type:'drilldown',
-        choose: function(event, ui) {
-            console.log(ui.item);
-        }
-    });
-});
+// $(document).ready(function(){
+//     $('#menu').menu({
+//         mode:'static',
+//         type:'drilldown',
+//         choose: function(event, ui) {
+//             console.log(ui.item);
+//         }
+//     });
+// });
 
 </script>
 
