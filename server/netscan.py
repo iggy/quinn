@@ -129,7 +129,7 @@ if __name__=='__main__':
         sys.exit()
     netscan(sys.argv[1])
     
-    sys.exit(0)
+    #sys.exit(0)
     
     def worker():
         while True:

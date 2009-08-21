@@ -27,11 +27,11 @@ def rack(request):
     '''view a specific rack's contents or create a new one'''
     if "which_rack" in request.GET:
         # show them a specific rack
-        pass
+        rack = Rack.objects.get(name=request.GET['which_rack'])
     else:
         # show a new empty rack
         pass
-    return HttpResponse('foo')
+    return direct_to_template(request, 'monitoring/rack.html', locals())
 
 @login_required
 def racks(request):

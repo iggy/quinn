@@ -15,7 +15,7 @@ class Host(models.Model):
     # hosts and the IP's will go into the IP model as additioinal_ips
     name = models.CharField(max_length=200)
     IP = models.IPAddressField(unique=True)
-    mac = models.CharField(max_length=12,blank=True,null=True)
+    mac = models.CharField(max_length=17,blank=True,null=True)
     macvnd = models.CharField(max_length=200,blank=True,null=True)
     OS_vendor = models.CharField(max_length=200,blank=True,null=True)
     OS_class = models.CharField(max_length=200,blank=True,null=True)
@@ -43,7 +43,7 @@ class IP(models.Model):
     IP = models.IPAddressField(unique=True)
 class Mac(models.Model):
     host = models.ForeignKey(Host,related_name="additional_macs")
-    mac = models.CharField(max_length=12)
+    mac = models.CharField(max_length=17)
 
 class HostExtraData(models.Model):
     '''
@@ -95,22 +95,33 @@ class Rack(models.Model):
         return self.name
     def get_hosts_in_order(self):
         d = []
+        skip = 0
         for u in range(self.how_many_U,0,-1):
             try:
-                host = self.racklocation_set.get(rack_Us__U=u).host
+                host = self.racklocation_set.get(rack_U_pos=u).host
+                numu = self.racklocation_set.get(rack_U_pos=u).number_of_U
+                skip = numu-1
             except:
                 host = ''
-            d.append(host)
+                numu = 1
+                if skip > 0:
+                    numu = None
+                skip -= 1
+            d.append([u,host,numu])
         return d
+    def get_u_range(self):
+        return range(self.how_many_U,0,-1)
     
 class RackLocation(models.Model):
     host = models.ForeignKey(Host)
     rack = models.ForeignKey(Rack)
-    rack_Us = models.ManyToManyField('RackU')
+    #rack_U_pos = models.ManyToManyField('RackU')
+    rack_U_pos = models.IntegerField('Top rack U occupied')
+    number_of_U = models.IntegerField()
     def __unicode__(self):
-        return "%s - %s" % (self.rack_Us,self.host)
+        return "%s - %s" % (self.rack_U_pos,self.host)
     class Meta:
-        ordering = ['rack_Us']
+        ordering = ['-rack_U_pos']
         #order_with_respect_to = 'rack_Us'
 
 class RackU(models.Model):

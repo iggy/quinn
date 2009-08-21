@@ -5,8 +5,12 @@
 
 {% block content %}
 
+<h1>Racks</h1>
 <table class="rack_table">
 {% for rack in racks %}
+<tr><td><a href="{% url monitoring.views.rack %}?which_rack={{ rack.name }}">{{rack.name}}</a></td></tr>
+
+{% comment %}
 <tr><th>U</th><th>{{ rack }}</th></tr>
     {% for h in rack.get_hosts_in_order %}
         <tr>
@@ -14,6 +18,7 @@
             <td><a href="{% if h.id %}{% url monitoring.views.host h.id %}{% endif %}">{{ h }}</a></td>
         </tr>
     {% endfor %}
+{% endcomment %}
 {% endfor %}
 </table>
 

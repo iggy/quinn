@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Quinn - Racks{% endblock %}
+
+
+{% block content %}
+
+<h1>Viewing Rack: <b>{{rack.name}}<b></h1>
+<br />
+<table class="table1">
+<tr><th>U</th><th>Host</th></tr>
+    {% for u,h,numu in rack.get_hosts_in_order %}
+        <tr>
+            <td>{{ forloop.revcounter }}</td>
+            {% if numu %}
+                <td rowspan="{{numu}}">
+                {% if h.id %}<a href="{% url monitoring.views.host h.id %}">{{ h }}</a>{% endif %}
+                </td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+</table>
+
+
+{% endblock %}

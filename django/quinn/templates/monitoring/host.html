@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<table>
+<table class="table1">
     <tr>
         <td>ID:</td><td>{{ host.id }}</td>
     </tr>
@@ -28,7 +28,7 @@
     </tr>
         {% endif %}
     <tr>
-        <td>MAC Address:</td><td>{{ host.mac }}</td>
+        <td>MAC Address:</td><td>{{ host.mac }} (vendor: {{host.macvnd}})</td>
     </tr>
         {% if host.additional_macs.all %}
     <tr>
@@ -53,6 +53,9 @@
     </tr>
     <tr>
         <td>Location:</td><td>{{ host.location }}</td>
+    </tr>
+    <tr>
+        <td>Services:</td><td>{% for s in host.service_set.all %}{{ s }}<br />{% endfor %}</td>
     </tr>
     {# TODO tagging and HostExtraData #}
 </table>
