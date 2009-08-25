@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     (r'^admin/(.*)', admin.site.root),
     (r'^monitoring/', include('monitoring.urls')),
+    (r'^virt/', include('virt.urls')),
 
     # media serving with runserver, comment in production
     (r'^m/(?P<path>.*)$', 'django.views.static.serve',

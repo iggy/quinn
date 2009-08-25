@@ -5,13 +5,17 @@
 
 {% block content %}
 
-{{ MEDIA_URL }}
-
-{{ foovar }}
-
 <h1>Quinn Overview</h1>
 
 <h3>We know about {{ numhosts }} hosts</h3>
 <h3>We are actively monitoring {{ nummon }} hosts</h3>
 <h3>There are {{ numagents }} hosts with agents running</h3>
+
+
+Hosts By Tag:
+
+
+Hosts Not In A Rack:
+
+
 {% endblock %}

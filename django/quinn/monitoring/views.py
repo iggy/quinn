@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render_to_response
+#from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.generic.simple import direct_to_template
 from quinn.monitoring.models import *
@@ -16,28 +16,28 @@ def action(request):
 def index(request):
     '''view the network... sort of an overview of everything we know'''
     numhosts = len(Host.objects.all())
+    # TODO
     nummon = 0
     numagents = 0
-    racks = Rack.objects.all()
     return direct_to_template(request, 'monitoring/index.html', locals())
     
     
 @login_required
-def rack(request):
-    '''view a specific rack's contents or create a new one'''
-    if "which_rack" in request.GET:
-        # show them a specific rack
-        rack = Rack.objects.get(name=request.GET['which_rack'])
-    else:
-        # show a new empty rack
-        pass
+def rack(request, rid=None):
+    '''view a specific rack's contents'''
+    rack = Rack.objects.get(id=rid)
     return direct_to_template(request, 'monitoring/rack.html', locals())
+
+@login_required
+def newrack(request):
+    '''create a new rack'''
+    return direct_to_template(request, 'monitoring/newrack.html', locals())
+
 
 @login_required
 def racks(request):
     '''view racks and their contents'''
     racks = Rack.objects.all()
-    useq = range(0,42)
     return direct_to_template(request, 'monitoring/racks.html', locals())
 
 @login_required

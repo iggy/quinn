@@ -8,7 +8,7 @@
 <h1>Racks</h1>
 <table class="rack_table">
 {% for rack in racks %}
-<tr><td><a href="{% url monitoring.views.rack %}?which_rack={{ rack.name }}">{{rack.name}}</a></td></tr>
+<tr><td><a href="{% url monitoring.views.rack rack.id %}">{{rack.name}}</a></td></tr>
 
 {% comment %}
 <tr><th>U</th><th>{{ rack }}</th></tr>

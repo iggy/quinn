@@ -5,6 +5,7 @@ html{color:#000;background:#FFF;}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pr
 .table1 th {background:#3366ff;border:solid 2px black;font-weight:bold;padding:3px;text-align:center;}
 .table1 td {border: solid 1px black;padding:2px;}
 
+#menu {background:#6699FF;padding:5px 20px;border-bottom:3px solid grey}
 #menu li {display:inline;}
 
 /* Styles for jQuery menu widget

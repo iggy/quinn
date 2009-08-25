@@ -16,13 +16,13 @@
 <body>
 <div id="menu">
     <ul>
-        <li><a href="/monitoring/">Home</a></li>
-        <li><a href="racks">Racks</a>
-            <ul>
-            {% for rack in racks %}
-                <li><a href="/monitoring/rack/?which_rack={{ rack }}">{{ rack }}</a></li>
+        <li><a href="{% url monitoring.views.index %}">Home</a></li>
+        <li><a href="{% url monitoring.views.racks %}">Racks</a>
+{% comment %}             <ul> {% endcomment %}
+            {% for rack in menuracks %}
+                <li><a href="{% url monitoring.views.rack rack.id %}">{{ rack }}</a></li>
             {% endfor %}
-            </ul>
+{% comment %}             </ul> {% endcomment %}
         </li>
     </ul>
 </div>
