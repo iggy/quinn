@@ -21,7 +21,7 @@ class Host(models.Model):
     OS_class = models.CharField(max_length=200,blank=True,null=True)
     OS_name = models.CharField(max_length=200,blank=True,null=True)
     #tags = TagField()
-    location = models.ForeignKey('Location',null=True) # a host should only be in 1 location... it's physics
+    location = models.ForeignKey('Location',blank=True,null=True) # a host should only be in 1 location... it's physics
     
     def __unicode__(self):
         return "%s - %s" % (self.IP, self.name)
@@ -44,6 +44,11 @@ class IP(models.Model):
 class Mac(models.Model):
     host = models.ForeignKey(Host,related_name="additional_macs")
     mac = models.CharField(max_length=17)
+
+class VMHost(models.Model):
+    host = models.ForeignKey(Host)
+
+# TODO not everything in racks has an IP/hostname/etc.
 
 class HostExtraData(models.Model):
     '''

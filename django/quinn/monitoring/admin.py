@@ -5,10 +5,23 @@ class HostExtraDataInline(admin.StackedInline):
     model = HostExtraData
     extra = 3
     
+class ServiceInline(admin.StackedInline):
+    model = Service
+    extra = 1
+class IPInline(admin.StackedInline):
+    model = IP
+    extra = 1
+class MacInline(admin.StackedInline):
+    model = Mac
+    extra = 1
+    
 class HostAdmin(admin.ModelAdmin):
-    inlines = [HostExtraDataInline,]
+    inlines = [HostExtraDataInline,ServiceInline,IPInline,MacInline,]
 
 admin.site.register(Host, HostAdmin)
+
+admin.site.register(IP)
+admin.site.register(Mac)
 
 admin.site.register(HostGroup)
 
