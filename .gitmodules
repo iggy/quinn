@@ -1,0 +1,3 @@
+[submodule "django/quinn/media/droppy"]
+	path = django/quinn/media/droppy
+	url = git://github.com/jaz303/droppy.git
