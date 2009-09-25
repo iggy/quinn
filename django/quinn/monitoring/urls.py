@@ -5,5 +5,7 @@ urlpatterns = patterns('monitoring.views',
     (r'racks/', 'racks'),
     (r'newrack/', 'newrack'),
     (r'rack/(?P<rid>\d+)', 'rack'),
+    (r'search/', 'search'),
+    (r'searchservice/(?P<port>\d+)', 'search_by_service'),
     (r'', 'index'),
 )

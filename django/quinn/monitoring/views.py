@@ -46,3 +46,17 @@ def host(request, hostid):
     host = Host.objects.get(id=hostid)
     return direct_to_template(request, 'monitoring/host.html', locals())
     
+@login_required
+def search(request):
+    svcs = Service.objects.all()
+    services = {}
+    for s in svcs:
+        services[s.name] = int(s.port)
+    #print services
+    return direct_to_template(request, 'monitoring/search.html', locals())
+
+@login_required
+def search_by_service(request, port):
+    service = Service.objects.filter(port=port)[0]
+    hosts = Host.objects.filter(service__port__exact=port)
+    return direct_to_template(request, 'monitoring/search_by_service.html', locals())

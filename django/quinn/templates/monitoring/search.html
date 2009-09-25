@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Quinn - Search For Host{% endblock %}
+
+
+{% block content %}
+
+<h1>Search by port number</h1>
+
+
+<form>
+<label for="port">Enter Port Number:</label><input id="port" type="text" />
+<input type="submit" value="Search">
+</form>
+
+
+<h1>Search by service name</h1>
+
+<div>
+{% for name, port in services.items %}
+<a class="service_name" href="{% url monitoring.views.search_by_service port %}">{{ name }}</a>
+{% empty %}
+<h1>No services running!</h1>
+{% endfor %}
+</div>
+
+{% endblock %}

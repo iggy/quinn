@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Quinn - Hosts running {{ service.name }}{% endblock %}
+
+
+{% block content %}
+
+{% for host in hosts %}
+<a href="{% url monitoring.views.host host.id %}">{{ host }}</a>
+{% endfor %}
+
+{% endblock %}

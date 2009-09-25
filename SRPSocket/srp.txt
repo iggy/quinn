@@ -1,0 +1,61 @@
+SRP Protocol Design
+
+SRP is the newest addition to a new class of strong authentication protocols
+that resist all the well-known passive and active attacks over the network.
+SRP borrows some elements from other key-exchange and identification
+protcols and adds some subtle modifications and refinements. The result is a
+protocol that preserves the strength and efficiency of the EKE family
+protocols while fixing some of their shortcomings.
+
+  N    A large safe prime (N = 2q+1, where q is prime)
+       All arithmetic is done modulo N.
+  g    A generator modulo N
+  s    User's salt
+  U    Username
+  p    Cleartext Password
+  H()  One-way hash function
+  ^    (Modular) Exponentiation
+  t    Security parameter
+  u    Random scrambling parameter
+  a,b  Secret ephemeral values
+  A,B  Public ephemeral values
+  x    Private key (derived from P and s)
+  v    Password verifier
+
+The host stores passwords using the following formula:
+
+  x = H(s, p)               (s is chosen randomly)
+  v = g^x                   (computes password verifier)
+
+The host then keeps {U, s, v} in its password database. The authentication
+protocol itself goes as follows:
+
+User -> Host:  U, A = g^a                  (identifies self, a = random number)
+Host -> User:  s, B = v + g^b, u           (sends salt, b = random number,
+					    u = t-bit random number)
+
+	User:  x = H(s, p)                 (user enters password)
+	User:  S = (B - g^x) ^ (a + ux)    (computes session key)
+	User:  K = H(S)
+
+	Host:  S = (Av^u) ^ b              (computes session key)
+	Host:  K = H(S)
+
+Now the two parties have a shared, strong session key K. To complete
+authentication, they need to prove to each other that their keys match. One
+possible way:
+
+User -> Host:  M = H(H(N) xor H(g), H(U), s, A, B, K)
+Host -> User:  H(A, M, K)
+
+The two parties also employ the following safeguards:
+
+  1. The user will abort if he receives B == 0 (mod N) or u == 0.
+  2. The host will abort if it detects that A == 0 (mod N).
+  3. The user must show his proof of K first. If the server detects that the
+     user's proof is incorrect, it must abort without showing its own proof
+     of K.
+
+A paper describing this protocol is also available.
+
+See http://srp.stanford.edu/srp/ for more information.

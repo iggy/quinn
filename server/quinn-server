@@ -9,8 +9,9 @@ import xml.dom.minidom as minidom
 # django init stuff, after this we should be able to access django models 
 # for whatever info we need
 
-# FIXME hackish, won't be required when we start installing to the system
 import sys, os.path
+
+# FIXME hackish, won't be required when we start installing to the system
 sys.path.append(os.path.abspath('../django/'))
 
 from django.core.management import setup_environ
@@ -18,6 +19,10 @@ import quinn.settings
 setup_environ(quinn.settings)
 
 # from quinn.models import scannets, etc.
+
+# FIXME also hackish
+sys.path.append(os.path.abspath('../SRPSocket/'))
+import SRPSocket
 
 def ping(host):
     """simple ICMP ping"""
@@ -38,30 +43,31 @@ def pingtest(host):
     rtt = ping(host)
     # save the rtt to the DB, if it failed, the rtt is false
 
-def netscan(nets=None):
-    if not nets:
-        #p = subprocess.Popen("/sbin/route -n", shell=True, stdout=subprocess.PIPE)
-        #out = p.stdout.read()
-        #nets = re.findall('^([\d\.]+)', str,re.M).
-        # TODO strip out invalid nets
-        # get nets from DB
-        nets = ["10.0.1.0/24"]#, "192.168.100.0/24"
+#def netscan(nets=None):
+    #if not nets:
+        ##p = subprocess.Popen("/sbin/route -n", shell=True, stdout=subprocess.PIPE)
+        ##out = p.stdout.read()
+        ##nets = re.findall('^([\d\.]+)', str,re.M).
+        ## TODO strip out invalid nets
+        ## get nets from DB
+        #nets = ["10.0.1.0/24"]#, "192.168.100.0/24"
         
-    for net in nets:
-        # scan the network with nmap, and then parse it's xml results
-        (ofile, opath) = tempfile.mkstemp()
-        out = subprocess.Popen("/usr/bin/nmap -oX %s %s" % (opath, net), shell=True, stdout=subprocess.PIPE)
-        print "nmap output to: ", opath
-        md = minidom.parse(opath)
-        for h in md.getElementsByTagName('host'):
-            # create/fetch Host model for this host
-            #Host(h.get
-            for p in h.getElementsByTagName('port'):
-                #create new Port model for the host
-                #Port(
-                pass
+    #for net in nets:
+        ## scan the network with nmap, and then parse it's xml results
+        #(ofile, opath) = tempfile.mkstemp()
+        #out = subprocess.Popen("/usr/bin/nmap -oX %s %s" % (opath, net), shell=True, stdout=subprocess.PIPE)
+        #print "nmap output to: ", opath
+        #md = minidom.parse(opath)
+        #for h in md.getElementsByTagName('host'):
+            ## create/fetch Host model for this host
+            ##Host(h.get
+            #for p in h.getElementsByTagName('port'):
+                ##create new Port model for the host
+                ##Port(
+                #pass
 
-t1 = threading.Timer(1, pingtest, ['localhost'])
-t2 = threading.Timer(1, netscan)
-t1.start()
-t2.start()
+#t1 = threading.Timer(1, pingtest, ['localhost'])
+#t2 = threading.Timer(1, netscan)
+#t1.start()
+#t2.start()
+
