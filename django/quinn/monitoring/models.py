@@ -27,7 +27,7 @@ class Host(models.Model):
         return "%s - %s" % (self.IP, self.name)
         
     class Meta:
-        ordering = ['name',]
+        ordering = ['name','IP']
 
 try:
     tagging.register(Host)
@@ -47,6 +47,7 @@ class Mac(models.Model):
 
 class VMHost(models.Model):
     host = models.ForeignKey(Host)
+    # total/free memory, cpu's, disks, nic's, etc.
 
 # TODO not everything in racks has an IP/hostname/etc.
 
@@ -117,6 +118,9 @@ class Rack(models.Model):
     def get_u_range(self):
         return range(self.how_many_U,0,-1)
     
+    class Meta:
+        ordering = ['name']
+    
 class RackLocation(models.Model):
     host = models.ForeignKey(Host)
     rack = models.ForeignKey(Rack)
@@ -167,3 +171,5 @@ class Service(models.Model):
     def __unicode__(self):
         return "%s (%s) on %s" % (self.name, self.port, self.host.IP)
 
+    class Meta:
+        ordering = ['port']
