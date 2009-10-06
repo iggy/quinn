@@ -1,5 +1,5 @@
 
-import dbus, gobject, avahi, config
+import dbus, gobject, avahi, config, socket
 
 def find_open_port():
     import random, socket
@@ -82,6 +82,16 @@ def service_resolved(*args):
     print 'name:', args[2]
     print 'address:', args[7]
     print 'port:', args[8]
+    
+    print "opening socket to %s:%s" % (args[7], args[8])
+    
+    try:
+        sock = socket.socket()
+        sock.connect((args[7], args[8]))
+        sock.send("Hello World")
+    except:
+        print "error connecting to master"
+        return
 
 def print_error(*args):
     print 'error_handler'
@@ -99,3 +109,30 @@ def found_new_service(interface, protocol, name, stype, domain, flags):
     config.server.ResolveService(interface, protocol, name, stype, 
         domain, avahi.PROTO_UNSPEC, dbus.UInt32(0), 
         reply_handler=service_resolved, error_handler=print_error)
+
+def server_handler(conn, *args):
+    line = conn.recv(4096)
+    if not len(line):
+        print "Connection closed."
+        return False
+    else:
+        print line
+        return True
+
+
+def server_listener(sock, *args):
+    conn, addr = sock.accept()
+    print "Connected", conn, addr
+    gobject.io_add_watch(conn, gobject.IO_IN, server_handler)
+    return True
+
+
+def server_init():
+    config.sock = socket.socket()
+    config.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    config.sock.bind((host, port))
+    config.sock.listen(1)
+    print "Listening..."
+    gobject.io_add_watch(config.sock, gobject.IO_IN, server_listener)
+    
+    

@@ -22,24 +22,29 @@ config.server = dbus.Interface(
 
 import qsrvutils
 
-if config.asPort is None:
-    config.asPort = qsrvutils.find_open_port()
+if socket.gethostname() == config.masterName:
+    print "Starting up as master"
+    
+    if config.asPort is None:
+        config.asPort = qsrvutils.find_open_port()
 
-config.server.connect_to_signal('StateChange', qsrvutils.server_state_changed)
-qsrvutils.server_state_changed(config.server.GetState())
+    config.server.connect_to_signal('StateChange', qsrvutils.server_state_changed)
+    qsrvutils.server_state_changed(config.server.GetState())
+    
+else:
+    print "connecting to master"
+    config.client = dbus.Interface(
+        config.bus.get_object(
+            avahi.DBUS_NAME,
+            config.server.ServiceBrowserNew(
+                avahi.IF_UNSPEC,
+                avahi.PROTO_UNSPEC,
+                config.asType,
+                config.asDomain,
+                dbus.UInt32(0))),
+            avahi.DBUS_INTERFACE_SERVICE_BROWSER)
 
-config.client = dbus.Interface(
-    config.bus.get_object(
-        avahi.DBUS_NAME,
-        config.server.ServiceBrowserNew(
-            avahi.IF_UNSPEC,
-            avahi.PROTO_UNSPEC,
-            config.asType,
-            config.asDomain,
-            dbus.UInt32(0))),
-        avahi.DBUS_INTERFACE_SERVICE_BROWSER)
-
-config.client.connect_to_signal('ItemNew', qsrvutils.found_new_service)
+    config.client.connect_to_signal('ItemNew', qsrvutils.found_new_service)
 
 try:
     config.main_loop.run()

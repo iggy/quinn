@@ -1,5 +1,8 @@
 import socket, qsrvutils
 
+# master daemon name
+masterName = "brianj-linux"
+
 # advertised service variables
 asName = "%s" % (socket.gethostname())
 asType = "_quinn._tcp"
