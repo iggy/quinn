@@ -1,7 +1,7 @@
 import socket, qsrvutils
 
 # master daemon name
-masterName = "brianj-linux"
+masterName = "vmhost03"
 
 # advertised service variables
 asName = "%s" % (socket.gethostname())
@@ -18,3 +18,4 @@ bus = None
 main_loop = None
 server = None
 client = None
+mstr_sock = None

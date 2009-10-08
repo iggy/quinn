@@ -31,6 +31,8 @@ if socket.gethostname() == config.masterName:
     config.server.connect_to_signal('StateChange', qsrvutils.server_state_changed)
     qsrvutils.server_state_changed(config.server.GetState())
     
+    qsrvutils.server_init()
+    
 else:
     print "connecting to master"
     config.client = dbus.Interface(

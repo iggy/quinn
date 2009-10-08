@@ -83,15 +83,24 @@ def service_resolved(*args):
     print 'address:', args[7]
     print 'port:', args[8]
     
-    print "opening socket to %s:%s" % (args[7], args[8])
+    if not config.mstr_sock:
+        # open up the socket to the master daemon
+        print "opening socket to %s:%s" % (args[7], args[8])
+        try:
+            import time
+            config.mstr_sock = socket.socket()
+            config.mstr_sock.connect((args[7], args[8]))
+            config.mstr_sock.send("{'init':{'plugins':['linux-stats','kvm-host']}}")
+            #time.sleep(10)
+            #print "Sending extra data"
+            #config.mstr_sock.send("{'report':{'plugin':'linux-stats','data':{'diskfree':'123456561432'}}}")
+        except Exception, E:
+            print "error connecting to master", E
+            return
+    else:
+        print "socket already open"
     
-    try:
-        sock = socket.socket()
-        sock.connect((args[7], args[8]))
-        sock.send("Hello World")
-    except:
-        print "error connecting to master"
-        return
+    # load all the plugins
 
 def print_error(*args):
     print 'error_handler'
@@ -130,8 +139,8 @@ def server_listener(sock, *args):
 def server_init():
     config.sock = socket.socket()
     config.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    config.sock.bind((host, port))
-    config.sock.listen(1)
+    config.sock.bind((config.asHost, config.asPort))
+    config.sock.listen(4)
     print "Listening..."
     gobject.io_add_watch(config.sock, gobject.IO_IN, server_listener)
     
