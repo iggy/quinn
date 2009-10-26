@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import dbus, gobject, avahi, socket
+import dbus, gobject, avahi, socket, anyjson
 from quinn.server.plugins import QuinnPlugin
 #from quinn.server.testd import main_loop
 
@@ -12,7 +12,7 @@ class MasterPlugin(QuinnPlugin):
         # listen on all interfaces and a "random" open unprivileged port
         self.sock.bind(('', 0))
         self.sock.listen(4)
-        print "Listening..."
+        print "Listening...", self.sock.getsockname()
         gobject.io_add_watch(self.sock, gobject.IO_IN, self.server_listener)
 
         # some other avahi init stuff
@@ -34,22 +34,23 @@ class MasterPlugin(QuinnPlugin):
         self.server_state_changed(self.server.GetState())
 
 
-    def server_handler(self, conn, *args):
+    def data_in_handler(self, conn, *args):
         """run when data comes in from one of clients"""
         line = conn.recv(4096)
         if not len(line):
             print "Connection closed."
             return False
-        else:
-            print line
-            return True
+
+        print "data_in_handler:", anyjson.deserialize(line)
+
+        return True
 
 
     def server_listener(self, sock, *args):
         """setup connection coming in to listen for incoming data"""
         conn, addr = sock.accept()
         print "Connected", conn, addr
-        gobject.io_add_watch(conn, gobject.IO_IN, self.server_handler)
+        gobject.io_add_watch(conn, gobject.IO_IN, self.data_in_handler)
         return True
 
     def add_service(self):
