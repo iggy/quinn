@@ -1,6 +1,7 @@
 #from __future__ import with_statement
 import tempfile, subprocess, Queue, threading
 import xml.etree.ElementTree as ET
+import libxml2
 
 # FIXME hackish, won't be required when we start installing to the system
 import sys, os
@@ -11,6 +12,7 @@ import quinn.settings
 setup_environ(quinn.settings)
 #import django
 from quinn.monitoring.models import Host, Service
+from tagging.models import Tag
 
 #print quinn.settings.DATABASE_NAME
 
@@ -55,13 +57,14 @@ def netscan(cidr):
             #except:
                 #hmac = ''
             try:
-                print "Attempting to find Host record with IP: ", host.find('address').get('addr')
+                print "netscan: Attempting to find Host record with IP: ", host.find('address').get('addr')
                 h = Host.objects.get(IP=hip)
                 h.name = hname
                 h.mac = hmac
                 h.macvnd = hmacvnd
             except:
                 # TODO only create a new record if it's not in additional_ips
+                # TODO optionally send a notification to someone when a new host appears on the network
                 print "No record found, creating new Host record for ", host.find('address').get('addr')
                 h = Host(IP=hip,name=hname,mac=hmac,macvnd=hmacvnd)
             h.save()
@@ -75,7 +78,10 @@ def hostscan(host):
     #proc = subprocess.Popen("nmap %s -oX %s" % (cidr, tfn), shell=True, stdout=subprocess.PIPE)
     proc = subprocess.Popen("nmap %s -O -sV -oX -" % (host), shell=True, stdout=subprocess.PIPE)
     xmlstr = proc.stdout.read()
+
     x = ET.fromstring(xmlstr)
+    doc = libxml2.parseDoc(xmlstr)
+
     for host in x.findall('host'):
         #pprint(host)#, host.find('status'))#, host.find('status').get('state'))
         if host.find('status').get('state') != "up":
@@ -103,7 +109,7 @@ def hostscan(host):
             print hip, hname, osvnd, oscls, osname
             
             try:
-                print "Attempting to find Host record with IP: ", host.find('address').get('addr')
+                print "hostscan: Attempting to find Host record with IP: ", host.find('address').get('addr')
                 h = Host.objects.get(IP=hip)
                 h.name = hname
                 h.OS_vendor = osvnd
@@ -120,6 +126,12 @@ def hostscan(host):
                     port=srvc.get('portid'))
                 s.save()
                 pprint(s)
+            ## add some common tags
+            print "Tagging"
+            
+            # domain controller
+            if doc.xpathEval('//port[@portid="135"]') and doc.xpathEval('//port[@portid="1389"]'):
+                Tag.objects.add_tag(h, 'Domain Controller')
     
 
 if __name__=='__main__':
@@ -143,7 +155,7 @@ if __name__=='__main__':
         t.setDaemon(True)
         t.start()
     
-    for host in Host.objects.filter(OS_vendor__isnull=True):
+    for host in Host.objects.all():#filter(OS_vendor__isnull=True):
         q.put(host.IP)
     
     q.join()

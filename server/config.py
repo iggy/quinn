@@ -1,4 +1,4 @@
-import socket, qsrvutils
+import socket#, qsrvutils
 
 # master daemon name
 masterName = "vmhost03"

@@ -6,6 +6,8 @@ from pysnmp.entity import engine, config
 from pysnmp.carrier.asynsock.dgram import udp
 from pysnmp.entity.rfc3413 import ntfrcv
 
+from pysnmp.smi import builder
+
 class SnmptraprcvPlugin(QuinnPlugin):
     """create a control socket and listen for commands coming in on it"""
     def __init__(self):
@@ -35,6 +37,13 @@ class SnmptraprcvPlugin(QuinnPlugin):
         contextEngineId, contextName,
         varBinds,
         cbCtx):
+        
+        mibBuilder = builder.MibBuilder()
+        mibBuilder.setMibPath('MIB', 
+            '/usr/lib/pymodules/python2.5/pysnmp/v4/smi/mibs/', 
+            '/usr/share/python-support/python-pysnmp4/pysnmp/v4/smi/mibs/')
+        #mibBuilder.loadModules('CPQPOWER')
+        
         print 'Notification from SNMP Engine \"%s\", Context \"%s\"' % (
             contextEngineId, contextName
         )

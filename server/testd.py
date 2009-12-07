@@ -11,12 +11,18 @@ except ImportError:
     sys.exit(1)
 from dbus import DBusException
 from dbus.mainloop.glib import DBusGMainLoop
-sys.path.append(os.path.abspath('../../')) # FIXME remove when we start installing in the system
+#sys.path.append(os.path.abspath('../../')) # FIXME remove when we start installing in the system
 
 #from quinn.server.SRPSocket.SRPSocket import SRPSocket
-from quinn.server import config
-from quinn.server import qsrvutils
+#from quinn.server import config
+#from quinn.server import qsrvutils
 import quinn.server.plugins
+
+# django init stuff
+os.environ['DJANGO_SETTINGS_MODULE'] = 'quinn.django.quinn.settings'
+from django.core.management import setup_environ
+import quinn.django.quinn.settings as settings
+setup_environ(settings)
 
 DBusGMainLoop(set_as_default=True)
 

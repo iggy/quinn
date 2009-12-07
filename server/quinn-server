@@ -6,23 +6,25 @@
 import threading, subprocess, re, tempfile, sys
 import xml.dom.minidom as minidom
 
-# django init stuff, after this we should be able to access django models 
-# for whatever info we need
+from quinn.server.models import *
 
-import sys, os.path
+## django init stuff, after this we should be able to access django models 
+## for whatever info we need
 
-# FIXME hackish, won't be required when we start installing to the system
-sys.path.append(os.path.abspath('../django/'))
+#import sys, os.path
 
-from django.core.management import setup_environ
-import quinn.settings
-setup_environ(quinn.settings)
+## FIXME hackish, won't be required when we start installing to the system
+#sys.path.append(os.path.abspath('../django/'))
 
-# from quinn.models import scannets, etc.
+#from django.core.management import setup_environ
+#import quinn.settings
+#setup_environ(quinn.settings)
 
-# FIXME also hackish
-sys.path.append(os.path.abspath('../SRPSocket/'))
-import SRPSocket
+## from quinn.models import scannets, etc.
+
+## FIXME also hackish
+#sys.path.append(os.path.abspath('../SRPSocket/'))
+#import SRPSocket
 
 def ping(host):
     """simple ICMP ping"""
