@@ -22,6 +22,13 @@ class ControlsocketPlugin(QuinnPlugin):
         if line == "quit":
             sys.exit()
 
+        if line[:6] == "reload":
+            reload(line[7:])
+
+        if line[:7] == "modload":
+            import
+
+
         return True
 
     def sock_listener(self, sock, *args):

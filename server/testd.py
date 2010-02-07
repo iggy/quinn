@@ -19,6 +19,13 @@ from dbus.mainloop.glib import DBusGMainLoop
 import quinn.server.plugins
 
 # django init stuff
+# FIXME hackish, won't be required when we start installing to the system
+#sys.path.append(os.path.abspath('../django/'))
+
+#from django.core.management import setup_environ
+#import quinn.settings
+#setup_environ(quinn.settings)
+
 os.environ['DJANGO_SETTINGS_MODULE'] = 'quinn.django.quinn.settings'
 from django.core.management import setup_environ
 import quinn.django.quinn.settings as settings
