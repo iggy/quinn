@@ -5,11 +5,13 @@ import os.path
 from django.contrib import admin
 admin.autodiscover()
 
+import django.contrib.auth.views
+
 urlpatterns = patterns('',
     # Example:
     # (r'^quinn/', include('quinn.foo.urls')),
 
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
+    # Uncomment the admin/doc line below and add 'django.contrib.admindocs'
     # to INSTALLED_APPS to enable admin documentation:
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
@@ -17,6 +19,7 @@ urlpatterns = patterns('',
     (r'^admin/(.*)', admin.site.root),
     (r'^monitoring/', include('monitoring.urls')),
     (r'^virt/', include('virt.urls')),
+    (r'^accounts/login/', django.contrib.auth.views.login),
 
     # media serving with runserver, comment in production
     (r'^m/(?P<path>.*)$', 'django.views.static.serve',

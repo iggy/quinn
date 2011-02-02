@@ -9,6 +9,8 @@ class Host(models.Model):
     a device connected to the network that we care about
     relationships: Rack, ScanNetwork, Test, Location
     '''
+    # this model is registered with tagging
+    #
     # FIXME some boxes have more than 1 IP, more than 1 MAC, etc.
     # what exactly is going to be unique and singular on a box?
     # going to use the IP as the unique thing, then the user can manually merge
@@ -22,21 +24,13 @@ class Host(models.Model):
     OS_name = models.CharField(max_length=200,blank=True,null=True)
     #tags = TagField()
     location = models.ForeignKey('Location',blank=True,null=True) # a host should only be in 1 location... it's physics
-    
+
     def __unicode__(self):
         return "%s - %s" % (self.IP, self.name)
-        
+
     class Meta:
         ordering = ['name','IP']
 
-try:
-    tagging.register(Host)
-except tagging.AlreadyRegistered:
-    # Dev Note: Not sure the right way to register a model for tagging b/c it
-    # raises this error if registered more than once. We end up registering
-    # the first time during "manage.py syncdb" and then a second time when
-    # actually attempting to run the site.
-    pass
 
 class IP(models.Model):
     host = models.ForeignKey(Host,related_name="additional_ips")
@@ -53,14 +47,18 @@ class VMHost(models.Model):
 
 class HostExtraData(models.Model):
     '''
-    any extra info about a host... used during parsing netscans and also 
+    any extra info about a host... used during parsing netscans and also
     available for custom note entry, etc
     '''
     host = models.ForeignKey(Host)
     key = models.CharField(max_length=60)
     value = models.TextField()
-    
+
 class HostGroup(models.Model):
+    '''
+    just a grouping of hosts
+    useful for
+    '''
     name = models.CharField(max_length=200)
     hosts = models.ManyToManyField(Host)
     def __unicode__(self):
@@ -72,8 +70,8 @@ class ScanNetwork(models.Model):
     cidr = models.CharField(max_length=20)
     def __unicode__(self):
         return "%s - %s" % (self.name, self.cidr)
-    
-    
+
+
 class Tester(models.Model):
     '''
     a test we run against a host (i.e. ping, service test, etc)
@@ -81,12 +79,12 @@ class Tester(models.Model):
     '''
     name = models.CharField(max_length=200)
     host = models.ForeignKey(Host)
-    name = models.CharField(max_length=200)
+    #name = models.CharField(max_length=200)
     last_status = models.CharField(max_length=200) # FIXME charfield?
     def __unicode__(self):
         return self.name
 
-    
+
 class TestStatus(models.Model):
     test = models.ForeignKey(Tester)
     status = models.CharField(max_length=200) # FIXME same as Test.last_status
@@ -117,11 +115,14 @@ class Rack(models.Model):
         return d
     def get_u_range(self):
         return range(self.how_many_U,0,-1)
-    
+
     class Meta:
         ordering = ['name']
-    
+
 class RackLocation(models.Model):
+    '''
+    the location in a specific rack a host occupies
+    '''
     host = models.ForeignKey(Host)
     rack = models.ForeignKey(Rack)
     #rack_U_pos = models.ManyToManyField('RackU')
@@ -134,6 +135,7 @@ class RackLocation(models.Model):
         #order_with_respect_to = 'rack_Us'
 
 class RackU(models.Model):
+    '''just a table of U for the racks'''
     U = models.IntegerField()
     def __unicode__(self):
         return str(self.U)
@@ -146,23 +148,23 @@ class Location(models.Model):
     #TODO scannetworks = models.ManyToManyField(ScanNetwork)
     def __unicode__(self):
         return self.name
-    
-    
+
+
 class UserEmail(models.Model):
     '''an email address the user can use for notifications, etc.'''
     name = models.CharField(max_length=200)
     address = models.CharField(max_length=200)
-    
+
 class UserExtension(models.Model):
     '''hold extra info about a user since we can get users from active directory'''
     emails = models.ManyToManyField(UserEmail)
-    
+
 class Notification(models.Model):
     teststatus = models.ForeignKey(TestStatus)
     error_status = models.CharField(max_length=200) # FIXME same as Test.last_status
     hosts = models.ManyToManyField(Host)
     hostgroups = models.ManyToManyField(HostGroup)
-    
+
 class Service(models.Model):
     name = models.CharField(max_length=200)
     host = models.ForeignKey(Host)
@@ -173,3 +175,19 @@ class Service(models.Model):
 
     class Meta:
         ordering = ['port']
+
+
+
+# Dev Note: Not sure the right way to register a model for tagging b/c it
+# raises this error if registered more than once. We end up registering
+# the first time during "manage.py syncdb" and then a second time when
+# actually attempting to run the site.
+try:
+    tagging.register(Host)
+except tagging.AlreadyRegistered:
+    pass
+try:
+    tagging.register(Rack)
+except tagging.AlreadyRegistered:
+    pass
+

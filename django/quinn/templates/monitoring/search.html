@@ -18,7 +18,7 @@
 
 <div>
 {% for name, port in services.items %}
-<a class="service_name" href="{% url monitoring.views.search_by_service port %}">{{ name }} ({{ port }})</a>
+<a class="service_name" href="{% url monitoring.views.search_by_service port %}">{{ name }} ({{ port }})</a>&nbsp;&nbsp;
 {% empty %}
 <h1>No services running!</h1>
 {% endfor %}
